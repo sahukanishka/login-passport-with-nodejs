@@ -61,7 +61,7 @@ router.post('/register', urlencodedParser, function (req,res) {
                 
             }
             else{
-                const newUser = new User({
+                const newUser = new User({ 
                     name,
                     email,
                     password
@@ -77,6 +77,7 @@ router.post('/register', urlencodedParser, function (req,res) {
                         //save user to db 
                         newUser.save()
                         .then(user=>{
+                            req.flash('success_msg','You are now registered and can login')
                             res.redirect('/users/login')
                         })
                         .catch(err =>console.log(err));
@@ -87,6 +88,17 @@ router.post('/register', urlencodedParser, function (req,res) {
             }
         })
     }
+});
+
+
+//login handle 
+
+router.post('/login',(req,res,next)=>{
+    passport.authenticate('local',{
+        successRedirect : '/dashboard',
+        failureRedirect : '/users/login',
+        failureFlash : true
+    })(req,res,next);
 });
   
 

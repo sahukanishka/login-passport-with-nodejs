@@ -4,9 +4,12 @@ const mongoose = require('mongoose');
 const passport = require('passport');
 const flash = require('connect-flash');
 const session = require('express-session');
+  
 const port = 3000
 
 const app = express()
+
+require('./config/passport')(passport);
 
 //DB config 
 const url = `mongodb+srv://admin:LeLRxKtIgIOj6Scz@cluster0.dfnul.mongodb.net/Cluster0?retryWrites=true&w=majority`;
@@ -32,6 +35,32 @@ app.set('view engine','ejs');
 
 //boday parser
 // app.use(express,urlencoded({extended:false}));
+
+
+//Express session 
+
+app.use(session({
+    secret:"secret key",
+    resave: true,
+    saveUninitialized:true
+}));
+
+//passpert middleware
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+//connnect flash 
+app.use(flash());
+
+//global var 
+app.use((req,res,next)=>{
+    res.locals.success_msg = req.flash('sucsess_msg');
+    res.locals.error_msg = req.flash('error_msg');
+    res.locals.error = req.flash('error');
+    next();
+
+});
 
 
 //routes 
